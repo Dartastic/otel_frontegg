@@ -1,13 +1,13 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the MIT License.
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_frontegg_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_frontegg';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class FronteggResult {
   const FronteggResult({
@@ -64,47 +64,47 @@ Future<T> tracedFrontegg<T>({
   final span = _tracer().startSpan(
     'frontegg $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
     if (r.result != null) {
       final extras = <Attribute<Object>>[];
       if (r.result!.userId != null) {
-        extras.add(OTel.attributeString('user.id', r.result!.userId!));
+        extras.add(OTelAPI.attributeString('user.id', r.result!.userId!));
       }
       if (r.result!.vendorId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'frontegg.vendor.id',
           r.result!.vendorId!,
         ));
       }
       if (r.result!.tenantId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'frontegg.tenant.id',
           r.result!.tenantId!,
         ));
       }
       if (r.result!.parentTenantId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'frontegg.parent_tenant.id',
           r.result!.parentTenantId!,
         ));
       }
       if (r.result!.permissionsCsv != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'frontegg.permissions',
           r.result!.permissionsCsv!,
         ));
       }
       if (r.result!.entitlementsCsv != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'frontegg.entitlements',
           r.result!.entitlementsCsv!,
         ));
       }
       if (r.result!.statusCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'http.response.status_code',
           r.result!.statusCode!,
         ));
@@ -115,13 +115,13 @@ Future<T> tracedFrontegg<T>({
           );
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
