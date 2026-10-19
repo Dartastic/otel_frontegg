@@ -10,6 +10,7 @@ const _tracerName = 'dartastic_otel_libs_frontegg';
 APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class FronteggResult {
+  /// Creates a result.
   const FronteggResult({
     this.userId,
     this.vendorId,
@@ -37,8 +38,13 @@ class FronteggResult {
   final int? statusCode;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class FronteggCallResult<T> {
+  /// Creates a call result.
   const FronteggCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final FronteggResult? result;
 }
